@@ -6,6 +6,8 @@ direction = { "0":[-1,0], # North
                "2":[1,0],  #South
                "3":[0,-1]}  #Weast
 
+Tile = namedtuple("Tile",["name","char"])
+
 class Tiles:
         Ant_E=Tile(name="ant-e",char="→")
         Ant_N=Tile(name="ant-n",char="↑")
@@ -23,7 +25,7 @@ class Tiles:
         RandomWeb=Tile(name="void",char="W")
 
 
-                @staticmethod
+        @staticmethod
         def char2Tile():
             for t in Tiles.__dict__.values():
                 if isinstance(t, Tile):
