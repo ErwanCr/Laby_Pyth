@@ -266,19 +266,8 @@ class Labyrinth {
         return view;
     }
 
-    Tile get(Position pos) {
-        if (pos == position)
-            return ant_tiles[int(direction)];
-        else
-            return board.get(pos);
-    }
-
-    Dimension size() {
-        Dimension size;
-        size.i = board.size();
-        size.j = size.i == 0 ? 0 : board[0].size();
-        return size;
-    }
+  
+  
 
     void randomize() {
         int n_random_rocks = 0;
@@ -315,40 +304,8 @@ class Labyrinth {
         }
     }
 
-    void win() {
-        _won = true;
-        message = "J'ai gagné!";
-    }
-    bool won() {
-        return _won;
-    }
 
-    Position devant() {
-        Position diff = directions[int(direction)];
-        return Position({position.i+diff.i, position.j+diff.j});
-    }
-
-    bool gauche() {
-        switch (direction) {
-        case Direction::North: direction=Direction::West;  break;
-        case Direction::East:  direction=Direction::North; break;
-        case Direction::South: direction=Direction::East;  break;
-        case Direction::West:  direction=Direction::South; break;
-        }
-        message = "";
-        return true;
-    }
-
-    bool droite() {
-        switch (direction) {
-        case Direction::North: direction=Direction::East;  break;
-        case Direction::East:  direction=Direction::South; break;
-        case Direction::South: direction=Direction::West;  break;
-        case Direction::West:  direction=Direction::North; break;
-        }
-        message = "";
-        return true;
-    }
+   
 
     bool avance() {
         Tile tile = board.get(position);
@@ -367,11 +324,8 @@ class Labyrinth {
         return true;
     }
 
-    Tile regarde() {
-        Tile tile = board.get(devant());
-        message = "";
-        return tile;
-    }
+   
+
 
     bool prend() {
         if ( carry == Tile::Void and regarde() == Tile::Rock ) {
@@ -384,20 +338,6 @@ class Labyrinth {
         return false;
     }
 
-    bool pose() {
-        if ( carry == Tile::Rock and
-             (regarde() == Tile::Void or
-              regarde() == Tile::Web or
-              regarde() == Tile::SmallWeb or
-              regarde() == Tile::SmallRock)) {
-            carry = Tile::Void;
-            board.set(devant(), Tile::Rock);
-            message = "";
-            return true;
-        }
-        message = "Je ne peux pas poser.";
-        return false;
-    }
 
     bool sow() {
         Tile tile = board.get(position);
@@ -410,19 +350,7 @@ class Labyrinth {
         return true;
     }
 
-    bool ouvre() {
-        if ( regarde() != Tile::Exit ) {
-            message = "Je ne peux pas ouvrir.";
-            return false;
-        }
-        if ( carry != Tile::Void ) {
-            message = "Je ne peux pas ouvrir en portant un objet.";
-            return false;
-        }
-        position = devant();
-        win();
-        return true;
-    }
+   
 };
 
 class LabyrinthView {
