@@ -60,30 +60,35 @@ class Labyrinth:
     def size(self):
         return (len(self.board),len(self.board[0]))
     def devant(self):
-        po= position(self.position.i+int(direction[self.direction][0]),self.position.j+int(direction[self.direction][1]));
+        po= position(self.position.i+int(direction[self.direction][0]),self.position.j+int(direction[self.direction][1]))
         return po
     def gauche(self):
         self.direction= str((int(self.direction)-1)%4)
         self.message=""
-        return True;
+        return True
     def droite(self):
         self.direction= str((int(self.direction)+1)%4)
         self.message=""
-        return True;
+        return True
     def win(self):
         self._won=True
-        message="J'ai gagné !"
+        self.message="J'ai gagné !"
     def won(self):
         return self._won
+
+
     def pose(self):
-        if (self.carry==.t.Rock and (regarde()==t.Void or regarde()==t.Web or regarde()==t.SmallWeb or regarde()==t.SmallRock  )):
-            self.carry=t.Void
-            board.set(devant(),t.Rock)
-            message=""
+        if (self.carry==Tiles.Rock and (regarde()==Tiles.Void or regarde()==Tiles.Web or regarde()==Tiles.SmallWeb or regarde()==Tiles.SmallRock  )):
+            self.carry=Tiles.Void
+            self.board.set(devant(),Tiles.Rock)
+            self.message=""
             return True
-        message="Je ne peux pas poser."
+        self.message="Je ne peux pas poser."
         return False
+    
+    
+    
     def regarde(self):
-        message=""
+        self.message=""
         return self.board.get(devant())
     
