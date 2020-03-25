@@ -9,5 +9,10 @@ dependencies:
 - xeus-cling
 - xwidgets
 - pip
+- matplotlib
+- ipywidgets
+- os
+- IPython.display
+- re
 - pip:
      - .
