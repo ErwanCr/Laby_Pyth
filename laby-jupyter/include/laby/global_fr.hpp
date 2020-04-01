@@ -26,6 +26,7 @@ auto ouvre()   { return app -> ouvre();   }
 auto regarde() { return app -> regarde(); }
 bool a_gagne() { return app -> won();     }
 
+
 void LABY(std::string s) {
     app = laby_level(s);
 }
