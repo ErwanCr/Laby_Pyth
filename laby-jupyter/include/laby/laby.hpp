@@ -436,7 +436,7 @@ class LabyrinthView {
         return value.to_string();
     }
     virtual void update() {
-    }
+    }//ici
 };
 
 
@@ -471,9 +471,10 @@ class Player {
         original_value(view.value),
         play_direction(PlayDirection::Forward),
         play_fps(1),
-        timer(std::bind(&Player::tick, this), play_fps) {
+        timer(std::bind(&Player::tick, this), play_fps) 
+        {
         reset();
-    }
+    }//ici
 
     void run() {
         timer.run();
@@ -562,7 +563,7 @@ class Player {
         return history[history.size()-1].won();
     }
 };
-
+//ici
 template <class LabyrinthView>
 class LabyBaseApp {
     public:
