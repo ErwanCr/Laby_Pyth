@@ -17,13 +17,13 @@ from IPython.display import Image
 # from IPython.display import display
 import random
 
-
+PlayDirection = Enum('PlayDirection','Forward Backward None')
 direction = { "0":[-1,0], # North  
                "1":[0,1], #East
                "2":[1,0],  #South
                "3":[0,-1]}  #Weast
 
-class  board: 
+class  Board: 
     def __init__(self,niveau):
         self.plateau=niveau
     
@@ -47,7 +47,7 @@ def charger(nom_niveau):
 
 
     stockJ=-1
-    dire=0;
+    dire=0
     for line in fichier:
         
         j=0
@@ -83,19 +83,18 @@ def charger(nom_niveau):
 
 class Labyrinth:
     def __init__(self,s):
-        self.tile = Tiles
+        
         self._won = False
         self.carry = Tiles.Void
-        
-        temp = charger(s)
-        self.direction = temp[3]
-        self.board = board(temp[0])
+        self.temp = charger(s)
+        self.direction = self.temp[3]
+        self.board = Board(self.temp[0])
         self.randomize()
-        self.position = position(temp[1],temp[2])
+        self.position = position(self.temp[1],self.temp[2])
         self.message = ""
         
-    
-    
+    def reset(): #todo
+        pass
     def dirToAnt(self):
         if self.direction =="0":
             return Tiles.Ant_N
@@ -116,12 +115,12 @@ class Labyrinth:
     def gauche(self):
         self.direction = str((int(self.direction)-1)%4)
         self.message = ""
-        return True;
+        return True
     
     def droite(self):
         self.direction = str((int(self.direction)+1)%4)
         self.message = ""
-        return True;
+        return True
     
     def avance(self):
         tile=self.board.get(self.position)
