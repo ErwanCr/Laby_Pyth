@@ -1,6 +1,7 @@
-from laby import *
+from widget.py import *
 
-l = 
+
+##declare ton appli 
 
 
 def debut():
