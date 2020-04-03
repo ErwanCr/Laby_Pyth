@@ -17,6 +17,7 @@ from IPython.display import Image
 # from IPython.display import display
 import random
 
+position = namedtuple ("position",["i","j"])
 PlayDirection = Enum('PlayDirection','Forward Backward None')
 direction = { "0":[-1,0], # North  
                "1":[0,1], #East
@@ -252,7 +253,155 @@ for t in Tiles.__dict__.keys() :
         d=z.group()
         Tiles.char2T[getattr(Tiles,t).char]=d
 
-position = namedtuple ("position",["i","j"])
+class LabyrinthView:
+    
+    def __init__(self,labyrinth ):
+        self.value=labyrinth
+    def to_string(self):
+        return value.to_string()
+    def update(self):
+        pass
+
+
+class Player :
+    def __init__(self, _view):
+        self.view = _view
+        self.original_value=view.value
+        self.play_direction=forward
+        self.play_fps=1
+        self.timer =Timer ( partial(self.tick),self.play_fps)
+        self.reset()
+       
+        def run(self):
+            self.timer.run()
+        
+        def update(self):
+            self.value = history[time]
+            self.view.update()
+        def get_value(self):
+            
+            return self.history[len(self.history)-1]
+        
+        def set_value(self,value):
+            if (len(self.history) > 10000):
+                raise RunTimeError("Votre programme a pris plus de 1000 étapes")
+                #throw std::runtime_error("Votre programme a pris plus de 1000 étapes");#throw
+            self.history.append(value);
+            if ( not self.timer.running() and self.time == len(self.history) -2):
+                self.time=self.tim+1
+                self.update()
+        def tick(self):
+            if(self.play_direction == Forward ): # a check toute la fonction 
+                self.step_forward()
+            else:
+                self.step_backward()
+        
+        def reset(self,value):      #verifier tous els attributs
+                self.time=0
+                self.history=[value]
+                self.update()
+        
+        def begin(self):
+            self.time=0
+            self.update()
+        
+        def end(self):
+            self.time= len(self.history)-1  
+            self.update()
+        def step_backward(self):
+            if( self.time >0):
+                self.time=self.time-1
+                self.update()
+        def step_forward(self):
+            if( self.time <len(self.history)-1):  
+                self.time=self.time+1
+                self.update()        
+        def backward (self):
+            self.play_direction = Backward # a check
+            self.timer.set_fps(self.play_fps)
+        
+        def play(self):
+            self. play_direction = Forward # a check
+            self.timer.set_fps(self.play_fps)
+        
+        def pause(self):
+            self.play_direction=None
+            self.timer.set_fps(0)
+        
+        def set_fps(self,fps):
+            self.play_fps=fps
+            if(self.play_direction != None):
+                self.timer.set_fps(fps)
+        
+        def won(self):
+            return self.history[len(self.history)-1].won()
+
+
+
+class LabyBaseApp:
+  
+    def __init__(self,labyrinth):
+        self.view=labyrinth
+        self.player=Player(self.view)       
+    
+    def debut(self) :
+        value = self.player.history[0]
+        value.randomize()
+        self.player.reset(value)
+        return res
+
+    def avance(self) :
+        value = self.player.get_value()
+        res = value.avance()
+        self.player.set_value(value)
+        return res
+    
+    def droite(self) :
+        value = self.player.get_value()
+        res = value.droite()
+        self.player.set_value(value)
+        return res
+    
+    def gauche(self) :
+        value = self.player.get_value()
+        res = value.gauche()
+        self.player.set_value(value)
+        return res
+        
+    def prend(self):
+        value = self.player.get_value()
+        res = value.prend()
+        self.player.set_value(value)
+        return res
+    
+    def pose(self) :
+        value = self.player.get_value()
+        res = value.pose()
+        self.player.set_value(value)
+        return res
+    
+    def sow(self) :
+        value = self.player.get_value()
+        res = value.sow()
+        self.player.set_value(value)
+        return res
+    
+    def regarde(self) :
+        return self.player.get_value().regarde()
+    
+    def ouvre(self):
+        value = self.player.get_value()
+        res = value.ouvre()
+        self.player.set_value(value)
+        return res
+    
+    def won(self): 
+        return self.player.won()
+            
+            
+            
+ ##########################################################""           
+
 l = Labyrinth("share/laby/levels/this-is-crazy.laby" )
 
 def affichage_niveau_recursif(laby):
