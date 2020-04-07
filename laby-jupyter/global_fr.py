@@ -3,31 +3,38 @@ from widget.py import *
 
 ##declare ton appli 
 
+app = laby_SVG_view_player_app("share/laby/levels/this-is-crazy.laby")
 
 def debut():
-    l.debut()
+    app.debut()
     
 def avance():
-    l.avance()
+    app.avance()
     
 def droite():
-    l.droite()
+    app.droite()
     
 def gauche():
-    l.gauche()
+    app.gauche()
     
 def pose():
-    l.pose()
+    app.pose()
     
 def prend():
-    l.prend()
+    app.prend()
     
 def ouvre():
-    l.ouvre()
+    app.ouvre()
 
 def regarde():
-    l.regarde()
+    app.regarde()
     
 def win():
-    l.win()
+    app.win()
     
+def LABY(s): 
+    app = laby_level(s)
+
+
+def LABY_BAR(s) :
+    app = laby_bar(s)
