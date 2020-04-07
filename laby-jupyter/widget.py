@@ -1,9 +1,54 @@
 import ipywidgets as widgets
 from ipywidgets import HBox, VBox ,Layout
 
+from laby.py import *
+
+class labyrinth_text_view(labyrinth_view): 
+    
+    widget=widgets.HTML(
+    value="",
+    placeholder='',
+    description='',
+    )
+    def display(self):
+        return display(self.widget)
+    
+    def __init__(self , labyrinth): 
+        labyrinth_view.__init__(self,labyrinth) 
+        self.update()
+    
+    def update(self): 
+        self.widget.value = "<pre>\n" + self.value.tostring() + "</pre>\n"
+    
+
+class labyrinthv_SVG_view_monolith (labyrinth_view): 
+    widget=widgets.HTML(
+    value="",
+    placeholder='',
+    description='',
+    )
+    def display(self) {
+        return display(self.widget)
+    
+    def __init__(self,labyrinth) :
+        labyrint_view.__init__(labyrinth) 
+        self.update()
+
+    def update(self) :
+        self.widget.value = self.value.html()
+    
+
+
+
+
 
 class player_view:
     def __init__(self,player):
+        widget=widgets.HTML(
+        value="",
+        placeholder='',
+        description='',
+        )
         output = widgets.Output()
 
         def fast_backward_clicked(b):
@@ -60,4 +105,4 @@ class player_view:
 
         widgets.HBox([fast_backward,backward,step_backward,pause,step_forward,play,fast_forward,slider])
     def display(self):
-        return widget.display()
+        return display(self.widget)
