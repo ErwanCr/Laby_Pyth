@@ -82,7 +82,9 @@ def charger(nom_niveau):
             i+=1
     return [tab,stockI,stockJ,dire]
 
-class Labyrinth:
+class labyrinth:
+    ## a rajouter from string // to string // html 
+    
     def __init__(self,s):
         
         self._won = False
@@ -94,8 +96,15 @@ class Labyrinth:
         self.position = position(self.temp[1],self.temp[2])
         self.message = ""
         
-    def reset(): #todo
-        pass
+    def reset(self): 
+        self._won = False
+        self.carry = Tiles.Void
+        self.direction = self.temp[3]
+        self.board = Board(self.temp[0])
+        self.randomize()
+        self.position = position(self.temp[1],self.temp[2])
+        self.message = ""
+
     def dirToAnt(self):
         if self.direction =="0":
             return Tiles.Ant_N
@@ -253,7 +262,7 @@ for t in Tiles.__dict__.keys() :
         d=z.group()
         Tiles.char2T[getattr(Tiles,t).char]=d
 
-class LabyrinthView:
+class labyrinth_view:
     
     def __init__(self,labyrinth ):
         self.value=labyrinth
@@ -402,7 +411,7 @@ class LabyBaseApp:
             
  ##########################################################""           
 
-l = Labyrinth("share/laby/levels/this-is-crazy.laby" )
+l = labyrinth("share/laby/levels/this-is-crazy.laby" )
 
 def affichage_niveau_recursif(laby):
     carte = laby.board.plateau
