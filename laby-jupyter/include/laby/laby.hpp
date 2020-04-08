@@ -61,7 +61,7 @@ unsigned char utf8_len(const std::string& str)
     return l;
 }
 
-struct Position {
+struct Position { // argument par defaut 
     int i;
     int j;
     public:
