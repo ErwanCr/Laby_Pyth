@@ -1,4 +1,5 @@
 from enum import Enum
+from functools import partial 
 from collections import namedtuple
 import re
 from collections import namedtuple
@@ -95,7 +96,18 @@ class labyrinth:
         self.randomize()
         self.position = position(self.temp[1],self.temp[2])
         self.message = ""
-        
+
+    def view(self):
+        view = self.board
+        if ( self.position.i < view.size() and
+             self.position.j < view[self.position.i].size() ):
+            # The ant is on the board; display it
+            view[self.position.i][self.position.j] = self.dirToAnt()
+        return view
+    
+
+
+
     def reset(self): 
         self._won = False
         self.carry = Tiles.Void
