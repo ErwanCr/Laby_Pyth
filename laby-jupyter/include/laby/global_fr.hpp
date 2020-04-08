@@ -27,11 +27,11 @@ auto regarde() { return app -> regarde(); }
 bool a_gagne() { return app -> won();     }
 
 
-void LABY(std::string s) {
+void LABY(std::string s) { // le nom est ici
     app = laby_level(s);
 }
 
-void LABY_BAR(std::string s) {
+void LABY_BAR(std::string s) { // description
     app = laby_bar(s);
 }
 
