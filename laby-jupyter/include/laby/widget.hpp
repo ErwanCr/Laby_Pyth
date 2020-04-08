@@ -143,14 +143,14 @@ class PlayerView {
         speed_slider.min   = 0;
         speed_slider.step  = 1;
         speed_slider.max   = 6;
-        XOBSERVE(speed_slider, value, [&player](const auto& s) {
+        XOBSERVE(speed_slider, value, [&player](const auto& s) { //.observe()
                                     int fps = 1;
                                     for (int i=0; i<s.value; i++) {
                                         fps *= 2;
                                     }
                                     player.set_fps(fps);
                                 });
-        widget.add(std::move(speed_slider));
+        widget.add(std::move(speed_slider)); 
     }
     auto display() {
         return widget.display();
@@ -175,7 +175,8 @@ class LabySVGViewPlayerApp: public LabyBaseApp<LabyrinthSVGViewMonolith> {
     xw::vbox widget;
     PlayerView controls;
     public:
-    LabySVGViewPlayerApp(Labyrinth labyrinth) : LabyBaseApp<LabyrinthSVGViewMonolith>(labyrinth), controls(player) {
+    //constructeur labaseapp -> on utilise l'attribut player pour controls 
+    LabySVGViewPlayerApp(Labyrinth labyrinth) : LabyBaseApp<LabyrinthSVGViewMonolith>(labyrinth), controls(player) { //ici
         widget = xw::vbox();
         widget.add(view.widget);
         widget.add(controls.widget);
