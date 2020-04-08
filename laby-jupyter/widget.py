@@ -1,7 +1,7 @@
 import ipywidgets as widgets
 from ipywidgets import HBox, VBox ,Layout
 
-from laby.py import *
+from laby import *
 
 class labyrinth_text_view(labyrinth_view): 
     
@@ -27,7 +27,7 @@ class labyrinthv_SVG_view_monolith (labyrinth_view):
     placeholder='',
     description='',
     )
-    def display(self) {
+    def display(self) :
         return display(self.widget)
     
     def __init__(self,labyrinth) :
@@ -85,8 +85,18 @@ class player_view:
         min=0.0,
         max=5.0,
         step=1,
-            description="Speed:"
+        description="Speed:"
+
         )
+        def on_value_change(change,player):
+            fps=1
+            value=int (change['new'])
+            for i in range (0,value):
+                fps=fps*2
+            player.set_fps(fps)
+        
+        slider.observe(on_value_change, names='value')
+
         play= widgets.Button(description="",icon='fa-play',layout=Layout(width='25px'))
         fast_backward= widgets.Button(description="",icon='fa-fast-backward',layout=Layout(width='35px'))
         backward= widgets.Button(description="",icon='fa-backward',layout=Layout(width='35px'))
@@ -102,7 +112,7 @@ class player_view:
         pause.on_click(pause_clicked)
         step_forward.on_click(step_forward_clicked)
         fast_forward.on_click(fast_forward_clicked)
-
+        slider.observe()
         widgets.HBox([fast_backward,backward,step_backward,pause,step_forward,play,fast_forward,slider])
     def display(self):
         return display(self.widget)
