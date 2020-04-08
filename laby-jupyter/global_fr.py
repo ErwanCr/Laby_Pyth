@@ -1,9 +1,10 @@
-from widget.py import *
+from widget
+ import *
 
 
 ##declare ton appli 
 
-app = laby_SVG_view_player_app("share/laby/levels/this-is-crazy.laby")
+app = laby_SVG_view_player_app("share/laby/levels/this-is-crazy.laby") #ici
 
 def debut():
     app.debut()
