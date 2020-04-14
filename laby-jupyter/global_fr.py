@@ -1,16 +1,15 @@
-from widget
- import *
+from widget import *
 
 
 ##declare ton appli 
 
-app = laby_SVG_view_player_app("share/laby/levels/this-is-crazy.laby") #ici
+app = laby_SVG_view_player_app #ici
 
 def debut():
     app.debut()
     
 def avance():
-    app.avance()
+    app.value.avance()
     
 def droite():
     app.droite()
