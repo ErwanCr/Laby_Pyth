@@ -4,17 +4,19 @@ from functools import partial
 from ipywidgets import HBox, VBox ,Layout
 PlayDirection = Enum('PlayDirection','Forward Backward None')
 from threading import *
-class player(VBox) :
-    
-        
-       
+from timer import *
+from traits.api import Delegate, HasTraits, Instance,Int, Str
 
+# def fonction qui fait tout ->> 
+
+class Player(HasTraits) :
+        time=Int
         def run(self):
             self.timer.run()
         
         def update(self):
-            self.value = self.history[self.time]
-            self.view.update()
+            
+            self.view.value= self.history[self.time]
         def get_value(self):
             
             return self.history[len(self.history)-1]
@@ -24,6 +26,7 @@ class player(VBox) :
                 raise RunTimeError("Votre programme a pris plus de 1000 étapes")
                 
             self.history.append(value)
+            #not self.timer.running() and
             if ( not self.timer.running() and self.time == len(self.history) -2):
                 self.time=self.time+1
                 self.update()
@@ -73,54 +76,80 @@ class player(VBox) :
         def won(self):
             return self.history[len(self.history)-1].won()
 
+        def set_time(self,tps):  
+            self.time=tps
+            
+
         def __init__(self, _view):
             self.view = _view
             self.original_value=self.view.value
             self.play_direction=PlayDirection.Forward
             self.play_fps=1
             self.reset(self.original_value)
-            self.timer =Timer ( partial( self.tick ), self.play_fps)
+            self.timer =perpetualTimer( self.play_fps,self.tick )
             self.history=[]
+            self.time=0
+            self.set_time(self.time)
 
-class player_view:
+class PlayerView(VBox):
+
+    
+    player_trait=Instance(Player)
+    time = Delegate('player_trait')
+    def _time_changed(self,old,new):
+        self.slider_time.value=self.time
+    def set_value(self,value):
+        self.player.set_value(value)
     def __init__(self,player):
-        widget=widgets.HTML(
+        
+        self.widget=ipywidgets.HTML(
         value="",
         placeholder='',
         description='',
         )
-        output = widgets.Output()
+        output = ipywidgets.Output()
+        self.player=player
+        
 
         def fast_backward_clicked(b):
             with output:
-                player.begin()
-                player.pause()
+                self.player.begin()
+                self.player.pause()
             
         def backward_clicked(b):
             with output:
-                player.backward()
+                self.player.backward()
         def step_backward_clicked(b):
             with output: 
-                player.pause()
-                player.step_backward()
+                self.player.pause()
+                self.player.step_backward()
         def pause_clicked(b):
             with output:
-                player.pause()
+                self.player.pause()
         def step_forward_clicked(b):
             with output:
-                player.pause()
-                player.step_forward()
+                self.player.pause()
+                self.player.step_forward()
 
         def play_clicked(b):
             with output:
-                player.play()
+                self.player.play()
         def fast_forward_clicked(b):
             with output:
-                player.pause()
-                player.end()
+                self.player.pause()
+                self.player.end()
                             
+        self.slider_time=ipywidgets.IntSlider(
+        value=0,
+        min=0,
+        max=len(self.player.history),
+        step=1,
+            description="time:"
+        )
 
-        slider=widgets.FloatSlider(
+        
+
+        slider=ipywidgets.FloatSlider(
         value=1.0,
         min=0.0,
         max=5.0,
@@ -128,22 +157,21 @@ class player_view:
             description="Speed:"
         )
 
-        def on_value_change(change,player):
+        def on_value_change(change):
             fps=1
             value=int (change['new'])
-            for i in range (0,value):
-                fps=fps*2
-            player.set_fps(fps)
+            fps=value
+            self.player.set_fps(fps)
         
         slider.observe(on_value_change, names='value')
 
-        play= widgets.Button(description="",icon='fa-play',layout=Layout(width='25px'))
-        fast_backward= widgets.Button(description="",icon='fa-fast-backward',layout=Layout(width='35px'))
-        backward= widgets.Button(description="",icon='fa-backward',layout=Layout(width='35px'))
-        step_backward= widgets.Button(description="",icon='fa-step-backward',layout=Layout(width='35px'))
-        pause= widgets.Button(description="",icon='fa-pause',layout=Layout(width='35px'))
-        step_forward= widgets.Button(description="",icon='fa-step-forward',layout=Layout(width='35px'))
-        fast_forward= widgets.Button(description="",icon='fa-fast-forward',layout=Layout(width='35px'))
+        play= ipywidgets.Button(description="",icon='fa-play',layout=Layout(width='25px'))
+        fast_backward= ipywidgets.Button(description="",icon='fa-fast-backward',layout=Layout(width='35px'))
+        backward= ipywidgets.Button(description="",icon='fa-backward',layout=Layout(width='35px'))
+        step_backward= ipywidgets.Button(description="",icon='fa-step-backward',layout=Layout(width='35px'))
+        pause= ipywidgets.Button(description="",icon='fa-pause',layout=Layout(width='35px'))
+        step_forward= ipywidgets.Button(description="",icon='fa-step-forward',layout=Layout(width='35px'))
+        fast_forward= ipywidgets.Button(description="",icon='fa-fast-forward',layout=Layout(width='35px'))
 
         play.on_click(play_clicked)
         fast_backward.on_click(fast_backward_clicked)
@@ -153,6 +181,15 @@ class player_view:
         step_forward.on_click(step_forward_clicked)
         fast_forward.on_click(fast_forward_clicked)
 
-        widgets.HBox([fast_backward,backward,step_backward,pause,step_forward,play,fast_forward,slider])
+        self.affichage=ipywidgets.HBox([fast_backward,backward,step_backward,pause,step_forward,play,fast_forward,slider])
+        VBox.__init__(self,[self.player.view,self.slider_time,self.affichage])
+
     def display(self):
-        return display(self.widget)
+        return display(self.affichage)
+    
+def ViewConstructor(visualisation):
+    player=Player(visualisation)
+    app=PlayerView(player) 
+    app.player_trait=player
+    
+    return app 
