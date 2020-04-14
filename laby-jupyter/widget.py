@@ -21,7 +21,7 @@ class labyrinth_text_view(labyrinth_view):
         self.widget.value = "<pre>\n" + self.value.tostring() + "</pre>\n"
     
 
-class labyrinthv_SVG_view_monolith (labyrinth_view): 
+class labyrinth_SVG_view_monolith (labyrinth_view): 
     widget=widgets.HTML(
     value="",
     placeholder='',
@@ -116,3 +116,29 @@ class player_view:
         widgets.HBox([fast_backward,backward,step_backward,pause,step_forward,play,fast_forward,slider])
     def display(self):
         return display(self.widget)
+
+
+class laby_SVG_view_player_app(labyrinth_SVG_view_monolith):
+    def __init__(self,labyrinth): 
+        labyrinth_SVG_view_monolith.__init__(self,labyrinth) ## super remplace le nom de l'héritage mais ici trop long 
+        self.controls = player_view(player(labyrinth))
+        self.widget=VBox([self.view.widget,self.controls.widget])
+    def display(self):
+        self.player.run() #// Or should this be already be done in e.g. PlayerView
+        return display(self.widget)
+    
+
+
+def laby_bar(s):
+    app = laby_SVG_view_player_app(labyrinth(s))
+    app.player.run()
+    app.display()
+    return app
+
+#level = string du level
+def laby_level(level) :
+    laby=labyrinth(level)
+    app = laby_SVG_view_player_app(laby)
+    app.player.run()
+    app.display()
+    return app
