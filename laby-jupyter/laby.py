@@ -18,12 +18,27 @@ from IPython.display import Image
 # from IPython.display import display
 import random
 
-position = namedtuple ("position",["i","j"])
+class position :
+    def __init__(self,i=0,j=0):
+        self.i=i
+        self.j=j
+    def __eq__(self,other):
+        return ( self.i == other.i ) and ( self.j == other.j )
+    
+    def __ne__(self,other):
+        return not(self==other)
+      
+    
+
 PlayDirection = Enum('PlayDirection','Forward Backward None')
 direction = { "0":[-1,0], # North  
                "1":[0,1], #East
                "2":[1,0],  #South
                "3":[0,-1]}  #Weast
+class dimension(position):
+    def __init__(self,i=0,j=0):
+        position.__init__(self,i,j) 
+        
 
 class  Board: 
     def __init__(self,niveau):
@@ -104,7 +119,13 @@ class labyrinth:
             # The ant is on the board; display it
             view[self.position.i][self.position.j] = self.dirToAnt()
         return view
-    
+    def to_string(self):
+        pass
+
+    def from_string(self):
+        pass
+    def html(self):
+        pass    
 
 
 
@@ -177,7 +198,7 @@ class labyrinth:
         return self.board.get(self.devant())
     
     def get(self,pos):
-        if (pos[0] == self.position[0] and pos[1] ==self.position[1]):
+        if ( pos == self.position ):
             return self.dirToAnt()
         else:
             return self.board.get(pos)
@@ -279,7 +300,7 @@ class labyrinth_view:
     def __init__(self,labyrinth ):
         self.value=labyrinth
     def to_string(self):
-        return value.to_string()
+        return self.value.to_string()
     def update(self):
         pass
 
@@ -433,7 +454,7 @@ def affichage_niveau_recursif(laby):
     for j in range (0,len(carte)):
         taille_ligne = len(carte[0])
         for i in range (0,len(carte[0])):
-            if(j==laby.position[0] and i==laby.position[1]):
+            if(j==laby.position.i and i==laby.position.j):
                 tuile= laby.dirToAnt()
             else:
                 tuile = l.board.get(position(j,i))
