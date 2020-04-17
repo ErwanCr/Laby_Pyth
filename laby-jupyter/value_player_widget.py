@@ -6,11 +6,96 @@ PlayDirection = Enum('PlayDirection','Forward Backward None')
 from threading import *
 from timer import *
 from traits.api import Delegate, HasTraits, Instance,Int, Str
-
+from traitlets import *
 # def fonction qui fait tout ->> 
 
+# class Player(HasTraits) :
+#         time=Int()
+#         def run(self):
+#             self.timer.run()
+        
+#         def update(self):
+            
+#             self.view.value= self.history[self.time]
+#         def get_value(self):
+            
+#             return self.history[len(self.history)-1]
+        
+#         def set_value(self,value): ## = player.value=data
+#             if (len(self.history) > 10000):
+#                 raise RunTimeError("Votre programme a pris plus de 1000 étapes")
+                
+#             self.history.append(value)
+#             #not self.timer.running() and
+#             if ( not self.timer.running() and self.time == len(self.history) -2):
+#                 self.time=self.time+1
+#                 self.update()
+#         def tick(self):
+#             if(self.play_direction == PlayDirection.Forward ):  
+#                 self.step_forward()
+#             else:
+#                 self.step_backward()
+        
+#         def reset(self,value):      
+#                 self.time=0
+#                 self.history=[value]
+#                 self.update()
+        
+#         def begin(self):
+#             self.time=0
+#             self.update()
+        
+#         def end(self):
+#             self.time= len(self.history)-1  
+#             self.update()
+#         def step_backward(self):
+#             if( self.time >0):
+#                 self.time=self.time-1
+#                 self.update()
+#         def step_forward(self):
+#             if( self.time <len(self.history)-1):  
+#                 self.time=self.time+1
+#                 self.update()        
+#         def backward (self):
+#             self.play_direction = PlayDirection.Backward # a check
+#             self.timer.set_fps(self.play_fps)
+        
+#         def play(self):
+#             self. play_direction = PlayDirection.Forward # a check
+#             self.timer.set_fps(self.play_fps)
+        
+#         def pause(self):
+#             self.play_direction=None
+#             self.timer.set_fps(0)
+        
+#         def set_fps(self,fps):
+#             self.play_fps=fps
+#             if(self.play_direction != None):
+#                 self.timer.set_fps(fps)
+        
+#         def won(self):
+#             return self.history[len(self.history)-1].won()
+
+#         def set_time(self,tps):  
+#             self.time=tps
+            
+
+#         def __init__(self, _view):
+#             self.view = _view
+#             self.original_value=self.view.value
+#             self.play_direction=PlayDirection.Forward
+#             self.play_fps=1
+#             self.reset(self.original_value)
+#             self.timer =perpetualTimer( self.play_fps,self.tick )
+#             self.history=[]
+#             self.time=0
+#             self.set_time(self.time)
+
+
+
+
 class Player(HasTraits) :
-        time=Int
+        time=Int()
         def run(self):
             self.timer.run()
         
@@ -21,11 +106,12 @@ class Player(HasTraits) :
             
             return self.history[len(self.history)-1]
         
-        def set_value(self,value): ## = player.value=data
+        def set_value(self,value): ## = player.value=data
             if (len(self.history) > 10000):
                 raise RunTimeError("Votre programme a pris plus de 1000 étapes")
                 
             self.history.append(value)
+            self.slider_time.max=len(self.history)-1
             #not self.timer.running() and
             if ( not self.timer.running() and self.time == len(self.history) -2):
                 self.time=self.time+1
@@ -38,23 +124,29 @@ class Player(HasTraits) :
         
         def reset(self,value):      
                 self.time=0
+                self.slider_time.value=self.time
                 self.history=[value]
+                self.slider_time.max=len(self.history)-1
                 self.update()
         
         def begin(self):
             self.time=0
+            self.slider_time.value=self.time
             self.update()
         
         def end(self):
             self.time= len(self.history)-1  
+            self.slider_time.value=self.time
             self.update()
         def step_backward(self):
             if( self.time >0):
                 self.time=self.time-1
+                self.slider_time.value=self.time
                 self.update()
         def step_forward(self):
             if( self.time <len(self.history)-1):  
                 self.time=self.time+1
+                self.slider_time.value=self.time
                 self.update()        
         def backward (self):
             self.play_direction = PlayDirection.Backward # a check
@@ -85,19 +177,39 @@ class Player(HasTraits) :
             self.original_value=self.view.value
             self.play_direction=PlayDirection.Forward
             self.play_fps=1
-            self.reset(self.original_value)
+            
             self.timer =perpetualTimer( self.play_fps,self.tick )
             self.history=[]
             self.time=0
             self.set_time(self.time)
+            
+            
+            self.slider_time=ipywidgets.IntSlider(
+                value=self.time,
+                min=0,
+                max=0,#len(self.history),
+                step=1,
+                description="time:"
+            )
+            self.reset(self.original_value)
+                
+            def _time_changed(self,old,new):
+                self.slider_time.value=new
+                self.update()
+            def on_value_change(change):
+                self.time=change['new']
+                self.update()
+            self.slider_time.observe(on_value_change,names='value')
 
 class PlayerView(VBox):
+    #link((slider_time,'value'),(player,'time'))
+    #link trailest.link
+    #player_trait=Instance(Player)
+    #time = Delegate('player_trait')
 
-    
-    player_trait=Instance(Player)
-    time = Delegate('player_trait')
-    def _time_changed(self,old,new):
-        self.slider_time.value=self.time
+    # def _time_changed (self,old,new):
+    #     self.slider_time.value=self.time
+
     def set_value(self,value):
         self.player.set_value(value)
     def __init__(self,player):
@@ -139,13 +251,13 @@ class PlayerView(VBox):
                 self.player.pause()
                 self.player.end()
                             
-        self.slider_time=ipywidgets.IntSlider(
-        value=0,
-        min=0,
-        max=len(self.player.history),
-        step=1,
-            description="time:"
-        )
+        # self.slider_time=ipywidgets.IntSlider(
+        # value=0,
+        # min=0,
+        # max=len(self.player.history),
+        # step=1,
+        #     description="time:"
+        # )
 
         
 
@@ -182,14 +294,17 @@ class PlayerView(VBox):
         fast_forward.on_click(fast_forward_clicked)
 
         self.affichage=ipywidgets.HBox([fast_backward,backward,step_backward,pause,step_forward,play,fast_forward,slider])
-        VBox.__init__(self,[self.player.view,self.slider_time,self.affichage])
+        VBox.__init__(self,[self.player.view,self.player.slider_time,self.affichage])
+        #link((self.slider_time,'value'),(self.player,'time'))
 
+        #self.widget_affichage=VBox([self.player.view,self.slider_time,self.affichage])
+        #self.player.time=0
+        self.player=player
     def display(self):
         return display(self.affichage)
     
 def ViewConstructor(visualisation):
     player=Player(visualisation)
     app=PlayerView(player) 
-    app.player_trait=player
-    
-    return app 
+  
+    return app
