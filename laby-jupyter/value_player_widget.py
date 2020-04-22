@@ -96,26 +96,26 @@ from traitlets import *
 
 class Player(HasTraits) :
         time=Int()
+
         def run(self):
             self.timer.run()
         
         def update(self):
-            
+            self.slider_time.value=self.time
             self.view.value= self.history[self.time]
         def get_value(self):
             
             return self.history[len(self.history)-1]
         
         def set_value(self,value): ## = player.value=data
-            if (len(self.history) > 10000):
-                raise RunTimeError("Votre programme a pris plus de 1000 étapes")
-                
+            if not(len(self.history) > 10000):#####icicicicicicicicici
+                raise RuntimeError("Votre programme a pris plus de 1000 étapes")
             self.history.append(value)
             self.slider_time.max=len(self.history)-1
-            #not self.timer.running() and
             if ( not self.timer.running() and self.time == len(self.history) -2):
                 self.time=self.time+1
                 self.update()
+        
         def tick(self):
             if(self.play_direction == PlayDirection.Forward ):  
                 self.step_forward()
@@ -124,29 +124,26 @@ class Player(HasTraits) :
         
         def reset(self,value):      
                 self.time=0
-                self.slider_time.value=self.time
                 self.history=[value]
                 self.slider_time.max=len(self.history)-1
                 self.update()
         
         def begin(self):
             self.time=0
-            self.slider_time.value=self.time
+            
             self.update()
         
         def end(self):
             self.time= len(self.history)-1  
-            self.slider_time.value=self.time
             self.update()
+
         def step_backward(self):
             if( self.time >0):
                 self.time=self.time-1
-                self.slider_time.value=self.time
                 self.update()
         def step_forward(self):
             if( self.time <len(self.history)-1):  
                 self.time=self.time+1
-                self.slider_time.value=self.time
                 self.update()        
         def backward (self):
             self.play_direction = PlayDirection.Backward # a check
@@ -155,10 +152,12 @@ class Player(HasTraits) :
         def play(self):
             self. play_direction = PlayDirection.Forward # a check
             self.timer.set_fps(self.play_fps)
-        
+            self.timer.run()
+
         def pause(self):
             self.play_direction=None
-            self.timer.set_fps(0)
+            self.timer.cancel()
+            #self.timer.set_fps(0)
         
         def set_fps(self,fps):
             self.play_fps=fps
@@ -178,10 +177,10 @@ class Player(HasTraits) :
             self.play_direction=PlayDirection.Forward
             self.play_fps=1
             
-            self.timer =perpetualTimer( self.play_fps,self.tick )
+            self.timer =PerpetualTimer( self.play_fps,self.tick )
             self.history=[]
             self.time=0
-            self.set_time(self.time)
+           
             
             
             self.slider_time=ipywidgets.IntSlider(
@@ -193,13 +192,14 @@ class Player(HasTraits) :
             )
             self.reset(self.original_value)
                 
-            def _time_changed(self,old,new):
-                self.slider_time.value=new
-                self.update()
+            
             def on_value_change(change):
                 self.time=change['new']
                 self.update()
             self.slider_time.observe(on_value_change,names='value')
+            #@observe('value')
+            #def _value_changed(self,change):
+            #    self.set_value(change)
 
 class PlayerView(VBox):
     #link((slider_time,'value'),(player,'time'))
@@ -264,16 +264,14 @@ class PlayerView(VBox):
         slider=ipywidgets.FloatSlider(
         value=1.0,
         min=0.0,
-        max=5.0,
+        max=6.0,
         step=1,
             description="Speed:"
         )
-
+        # 2puissance speed affiché ou alors nous affiché juste la valeur et pas "speed " 2** = puissance 
         def on_value_change(change):
-            fps=1
             value=int (change['new'])
-            fps=value
-            self.player.set_fps(fps)
+            self.player.set_fps(2**value)
         
         slider.observe(on_value_change, names='value')
 
@@ -300,10 +298,8 @@ class PlayerView(VBox):
         #self.widget_affichage=VBox([self.player.view,self.slider_time,self.affichage])
         #self.player.time=0
         self.player=player
-    def display(self):
-        return display(self.affichage)
     
-def ViewConstructor(visualisation):
+def ValuePlayerWidget(visualisation):
     player=Player(visualisation)
     app=PlayerView(player) 
   
